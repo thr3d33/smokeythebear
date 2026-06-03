@@ -1,53 +1,284 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wednesday Countdown</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wednesday Countdown</title>
 
-    <link rel="stylesheet" href="styles.css">
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+}
+
+body{
+    background:#000;
+    color:#fff;
+    font-family:Arial, Helvetica, sans-serif;
+    overflow:hidden;
+}
+
+.container{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+}
+
+/* Logo */
+
+.logo{
+    width:450px;
+    max-width:90vw;
+    margin-top:70px;
+
+    animation:pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+        opacity:.75;
+    }
+
+    50%{
+        transform:scale(1.08);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(1);
+        opacity:.75;
+    }
+}
+
+/* Countdown Position */
+
+.countdown-wrapper{
+    margin-top:160px;
+}
+
+/* Countdown */
+
+.countdown{
+    display:flex;
+    justify-content:center;
+    gap:24px;
+    flex-wrap:wrap;
+}
+
+.time-box{
+    min-width:140px;
+
+    padding:24px;
+
+    text-align:center;
+
+    border-radius:14px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:rgba(255,255,255,.03);
+
+    backdrop-filter:blur(10px);
+}
+
+.time-box span{
+    display:block;
+
+    font-size:3rem;
+
+    font-weight:700;
+
+    line-height:1;
+}
+
+.time-box small{
+    display:block;
+
+    margin-top:10px;
+
+    font-size:.75rem;
+
+    letter-spacing:2px;
+
+    opacity:.6;
+
+    text-transform:uppercase;
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+    .logo{
+        width:300px;
+        margin-top:50px;
+    }
+
+    .countdown-wrapper{
+        margin-top:100px;
+    }
+
+    .countdown{
+        gap:12px;
+    }
+
+    .time-box{
+        min-width:90px;
+        padding:18px;
+    }
+
+    .time-box span{
+        font-size:2rem;
+    }
+}
+</style>
 </head>
 <body>
 
-    <main class="container">
+<div class="container">
 
-        <img
-            src="./logo.png"
-            alt="Logo"
-            class="logo"
-        >
+    <img
+        src="./logo.png"
+        alt="Logo"
+        class="logo"
+    >
 
-        <div class="countdown-wrapper">
+    <div class="countdown-wrapper">
 
-            <div class="countdown">
+        <div class="countdown">
 
-                <div class="time-box">
-                    <span id="days">00</span>
-                    <small>Days</small>
-                </div>
+            <div class="time-box">
+                <span id="days">00</span>
+                <small>Days</small>
+            </div>
 
-                <div class="time-box">
-                    <span id="hours">00</span>
-                    <small>Hours</small>
-                </div>
+            <div class="time-box">
+                <span id="hours">00</span>
+                <small>Hours</small>
+            </div>
 
-                <div class="time-box">
-                    <span id="minutes">00</span>
-                    <small>Minutes</small>
-                </div>
+            <div class="time-box">
+                <span id="minutes">00</span>
+                <small>Minutes</small>
+            </div>
 
-                <div class="time-box">
-                    <span id="seconds">00</span>
-                    <small>Seconds</small>
-                </div>
-
+            <div class="time-box">
+                <span id="seconds">00</span>
+                <small>Seconds</small>
             </div>
 
         </div>
 
-    </main>
+    </div>
 
-    <script src="script.js"></script>
+</div>
+
+<script>
+function getNextWednesdayAtSevenThirty() {
+
+    const now = new Date();
+
+    const target = new Date(now);
+
+    const currentDay = now.getDay();
+
+    /* Wednesday = 3 */
+    let daysUntilWednesday =
+        (3 - currentDay + 7) % 7;
+
+    target.setHours(
+        19,
+        30,
+        0,
+        0
+    );
+
+    /* If already past Wednesday 19:30, move to next week */
+    if (
+        daysUntilWednesday === 0 &&
+        now >= target
+    ) {
+        daysUntilWednesday = 7;
+    }
+
+    target.setDate(
+        target.getDate() +
+        daysUntilWednesday
+    );
+
+    return target;
+}
+
+function updateCountdown() {
+
+    const now = new Date();
+
+    const target =
+        getNextWednesdayAtSevenThirty();
+
+    const distance =
+        target - now;
+
+    const days =
+        Math.floor(
+            distance /
+            (1000 * 60 * 60 * 24)
+        );
+
+    const hours =
+        Math.floor(
+            (
+                distance %
+                (1000 * 60 * 60 * 24)
+            ) /
+            (1000 * 60 * 60)
+        );
+
+    const minutes =
+        Math.floor(
+            (
+                distance %
+                (1000 * 60 * 60)
+            ) /
+            (1000 * 60)
+        );
+
+    const seconds =
+        Math.floor(
+            (
+                distance %
+                (1000 * 60)
+            ) /
+            1000
+        );
+
+    document.getElementById("days").textContent =
+        String(days).padStart(2, "0");
+
+    document.getElementById("hours").textContent =
+        String(hours).padStart(2, "0");
+
+    document.getElementById("minutes").textContent =
+        String(minutes).padStart(2, "0");
+
+    document.getElementById("seconds").textContent =
+        String(seconds).padStart(2, "0");
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+</script>
 
 </body>
 </html>
