@@ -33,13 +33,10 @@ body{
     justify-content:flex-start;
 }
 
-/* Logo */
-
 .logo{
     width:450px;
     max-width:90vw;
     margin-top:70px;
-
     animation:pulse 2.5s ease-in-out infinite;
 }
 
@@ -61,13 +58,11 @@ body{
     }
 }
 
-/* Countdown Position */
+/* Raised countdown */
 
 .countdown-wrapper{
-    margin-top:160px;
+    margin-top:100px;
 }
-
-/* Countdown */
 
 .countdown{
     display:flex;
@@ -78,45 +73,28 @@ body{
 
 .time-box{
     min-width:140px;
-
     padding:24px;
-
     text-align:center;
-
     border-radius:14px;
-
     border:1px solid rgba(255,255,255,.08);
-
     background:rgba(255,255,255,.03);
-
-    backdrop-filter:blur(10px);
 }
 
 .time-box span{
     display:block;
-
     font-size:3rem;
-
     font-weight:700;
-
     line-height:1;
 }
 
 .time-box small{
     display:block;
-
     margin-top:10px;
-
     font-size:.75rem;
-
     letter-spacing:2px;
-
     opacity:.6;
-
     text-transform:uppercase;
 }
-
-/* Mobile */
 
 @media(max-width:768px){
 
@@ -126,7 +104,7 @@ body{
     }
 
     .countdown-wrapper{
-        margin-top:100px;
+        margin-top:70px;
     }
 
     .countdown{
@@ -185,99 +163,63 @@ body{
 </div>
 
 <script>
-function getNextWednesdayAtSevenThirty() {
+function getNextTarget() {
 
     const now = new Date();
-
     const target = new Date(now);
 
-    const currentDay = now.getDay();
+    let daysUntil = (3 - now.getDay() + 7) % 7;
 
-    /* Wednesday = 3 */
-    let daysUntilWednesday =
-        (3 - currentDay + 7) % 7;
+    target.setHours(19,30,0,0);
 
-    target.setHours(
-        19,
-        30,
-        0,
-        0
-    );
-
-    /* If already past Wednesday 19:30, move to next week */
-    if (
-        daysUntilWednesday === 0 &&
-        now >= target
-    ) {
-        daysUntilWednesday = 7;
+    if(daysUntil === 0 && now >= target){
+        daysUntil = 7;
     }
 
-    target.setDate(
-        target.getDate() +
-        daysUntilWednesday
-    );
+    target.setDate(target.getDate() + daysUntil);
 
     return target;
 }
 
-function updateCountdown() {
+function updateCountdown(){
 
     const now = new Date();
+    const target = getNextTarget();
 
-    const target =
-        getNextWednesdayAtSevenThirty();
+    const distance = target - now;
 
-    const distance =
-        target - now;
+    const days = Math.floor(distance / (1000*60*60*24));
 
-    const days =
-        Math.floor(
-            distance /
-            (1000 * 60 * 60 * 24)
-        );
+    const hours = Math.floor(
+        (distance % (1000*60*60*24))
+        / (1000*60*60)
+    );
 
-    const hours =
-        Math.floor(
-            (
-                distance %
-                (1000 * 60 * 60 * 24)
-            ) /
-            (1000 * 60 * 60)
-        );
+    const minutes = Math.floor(
+        (distance % (1000*60*60))
+        / (1000*60)
+    );
 
-    const minutes =
-        Math.floor(
-            (
-                distance %
-                (1000 * 60 * 60)
-            ) /
-            (1000 * 60)
-        );
-
-    const seconds =
-        Math.floor(
-            (
-                distance %
-                (1000 * 60)
-            ) /
-            1000
-        );
+    const seconds = Math.floor(
+        (distance % (1000*60))
+        / 1000
+    );
 
     document.getElementById("days").textContent =
-        String(days).padStart(2, "0");
+        String(days).padStart(2,"0");
 
     document.getElementById("hours").textContent =
-        String(hours).padStart(2, "0");
+        String(hours).padStart(2,"0");
 
     document.getElementById("minutes").textContent =
-        String(minutes).padStart(2, "0");
+        String(minutes).padStart(2,"0");
 
     document.getElementById("seconds").textContent =
-        String(seconds).padStart(2, "0");
+        String(seconds).padStart(2,"0");
 }
 
 updateCountdown();
-setInterval(updateCountdown, 1000);
+setInterval(updateCountdown,1000);
 </script>
 
 </body>
